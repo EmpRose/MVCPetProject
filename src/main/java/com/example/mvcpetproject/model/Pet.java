@@ -1,25 +1,34 @@
 package com.example.mvcpetproject.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 
 
-@Data // Zur automatischen Erzeugung von Getter und Setter in .toString()
-@NoArgsConstructor //Erstellt ein leeren Constructor
-@AllArgsConstructor // Erstellt ein Constructor mit allen Eigenschaftsfeldern
 
-public class Pet { // Unsere Pet Klasse
+@Entity // Сущность = Джава класс, который отображается в таблице БД. Каждая сущность = обьект в соответствующей строке.
+public class Pet {
+    @Id // key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Id wird automatisch generiert
     private Long id;
     @NotNull(message = "Name cannot be null")
     private String name;
     @NotNull(message = "Type cannot be null")
     private String type;
 
-    public Pet(long id, String name, String type){
+    private int age;
+
+
+    public Pet(){}
+    public Pet(long id, String name, String type,int age){
         this.id=id;
         this.name=name;
         this.type=type;
+        this.age=age;
     }
 
     public Long getId() {
@@ -44,5 +53,13 @@ public class Pet { // Unsere Pet Klasse
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

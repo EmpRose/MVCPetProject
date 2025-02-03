@@ -1,5 +1,6 @@
 package com.example.mvcpetproject.service;
 import com.example.mvcpetproject.model.Pet;
+import com.example.mvcpetproject.repository.PetRepository;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,42 +8,38 @@ import java.util.Optional;
 
 @Service
 public class PetService { // Service zur Datenkontrolle (Wie TaskManager für Tasks)
-    private final List<Pet> pets = new ArrayList<>();
+    private final PetRepository petRepository;
 
-    public PetService(){ // Der Constructor erstellt direkt eine Liste von Pets
-        pets.add(new Pet(1L, "Buddy","Dog"));
-        pets.add(new Pet(2L, "Mittens","Cat"));
+    public PetService(PetRepository petRepository){
+        this.petRepository = petRepository;
     }
 
-    //Alle Pets zurückgeben
+    public Pet createPet(Pet pet){
+        return petRepository.save(pet);
+    }
+
     public List<Pet> getAllPets(){
-        return pets;
+
+        return petRepository.findAll();
     }
 
-    // Einen Pet via ID zurückgeben
     public Optional<Pet> getPetById(Long id) {
 
-        return pets.stream() // Stream zum Suchen nutzen
-                .filter(pet -> pet.getId().equals(id)) // Nach ID filtern
-                .findFirst(); // Das erst gefundene Element wird zurückgegeben.
+        return petRepository.findById(id);
     }
 
-    // Einen Pet zur Liste hinzufügen
     public void addPet (Pet pet){
-        pets.add(pet);
+        petRepository.save(pet);
     }
 
-    public void updatePet(Pet updatedPet){
-        for (int i = 0; i < pets.size(); i++){
-            Pet existingPet = pets.get(i);
-            if (existingPet.getId().equals(updatedPet.getId())){
-                pets.set(i,updatedPet); // Ersetzen des Pets, wenn die selbe ID eingegeben wurde
-                return;
-            }
-        }
-    }
-
-    public boolean removePetById(Long id){
-        return pets.removeIf(pet -> pet.getId().equals(id));
+    public Pet updatePet(Long id, Pet petDetails) {
+        Pet pet = petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
+        pet.setName(petDetails.getName());
+        pet.setType(petDetails.getType());
+        pet.setAge(petDetails.getAge());
+        return petRepository.save(pet);
+}
+    public void deletePet(Long id) {
+        petRepository.deleteById(id);
     }
 }
